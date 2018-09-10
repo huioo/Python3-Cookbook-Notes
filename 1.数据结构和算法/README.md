@@ -94,3 +94,143 @@ Python set()集合操作符号、数学符号：
 {1, 2, 3, 4}
 
 ```
+
+# 去重且保留顺序
+不保留序列顺序时，可使用`set()`生成一个集合，但序列的所有元素必须是`hashable`的类型，即元素必须可哈希。
+```python
+>>> a = {'a':1}
+>>> b = {'b':2}
+>>> set([a,b])
+Traceback (most recent call last):
+  File "<input>", line 1, in <module>
+TypeError: unhashable type: 'dict'
+>>> set([1,a])
+Traceback (most recent call last):
+  File "<input>", line 1, in <module>
+TypeError: unhashable type: 'dict'
+
+>>> hash(1)
+1
+>>> hash(a)
+Traceback (most recent call last):
+  File "<input>", line 1, in <module>
+TypeError: unhashable type: 'dict'
+```
+模仿`sorted()`、`min()`、`max()`等函数
+
+```python
+def dedupe(iter):
+    seen = set()
+    for item in iter:
+        if item not in seen:
+            yield item
+            seen.add(item)
+
+def dedupe(iter, key=None):
+    """ 自定义重复条件 """
+    seen = set()
+    for item in iter:
+        val = item if key is None else key(item)
+        if val not in seen:
+        ``    yield item
+            seen.add(val)
+
+```
+
+# slice 切片 
+切片对象的` indices(size) `函数，返回一个符合size大小的切片的` (start, stop, step) `元组值，所有的值都会被缩小，直到适合这个已知序列的边界为止。 这样，使用的时就不会出现 IndexError 异常。。
+```python
+>>> a1 = slice(2, 5, 1)
+>>> b = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+>>> b[a1]
+[2, 3, 4]
+>>> a1.start, a.stop, a.step
+(2, 3, 1)
+>>> a1.indices('01')    # 参数值为integer类型
+Traceback (most recent call last):
+  File "<input>", line 1, in <module>
+TypeError: 'str' object cannot be interpreted as an integer
+>>> a1.indices(len('01'))
+(2, 2, 1)
+>>> a2 = a1.indices(len('01'))
+>>> a2
+(2, 2, 1)
+>>> b[slice(*a2)]
+[]
+>>> '01'[slice(*a2)]
+''
+>>> '01'[a1]
+''
+
+```
+
+# 统计计数
+模块工具类 `from collections import Counter`
+
+```python
+>>> from collections import Counter
+>>> Counter()                   # a new, empty counter
+Counter()
+>>> Counter('gallahad')         # a new counter from an iterable
+Counter({'a': 3, 'l': 2, 'g': 1, 'h': 1, 'd': 1})
+>>> Counter({'a': 4, 'b': 2})   # a new counter from a mapping
+Counter({'a': 4, 'b': 2})
+>>> Counter(a=4, b=2)           # a new counter from keyword args
+Counter({'a': 4, 'b': 2})
+
+>>> c = Counter('aaabbc')
+>>> c['b'] -= 2                 # 计数为0时，依旧存在，除非删除entry或清除counter
+>>> c
+Counter({'a': 3, 'c': 1, 'b': 0})
+>>> c['b'] -= 2
+>>> c
+Counter({'a': 3, 'c': 1, 'b': -2})
+
+>>> c['d']      # 不存在时，返回0
+0
+```
+
+# operator.itemgetter
+
+模块的工具类 `from operator import itemgetter`
+
+
+```python
+>>> from operator import itemgetter
+>>> itemgetter('a')
+operator.itemgetter('a')
+>>> 
+"""
+上述结果的itemgetter类相应`__repr__()`方法：
+    def __repr__(self):
+        return '%s.%s(%s)' % (self.__class__.__module__,
+                              self.__class__.__name__,
+                              ', '.join(map(repr, self._items)))
+"""
+```
+
+```python
+>>> a = [{'a':1},{'a':1},{'a':1},{'a':1},{'a':1}]
+>>> map(itemgetter('a'), a)
+<map object at 0x000002253B077EF0>
+>>> list(map(itemgetter('a'), a))
+[1, 1, 1, 1, 1]
+
+"""
+itemgetter类，实例化返回的 `callable` 对象，当作函数调用相关`__call__()`方法：
+    def __init__(self, item, *items):
+        if not items:
+            self._items = (item,)
+            def func(obj):
+                return obj[item]
+            self._call = func
+        else:
+            self._items = items = (item,) + items
+            def func(obj):
+                return tuple(obj[i] for i in items)
+            self._call = func
+
+    def __call__(self, obj):
+        return self._call(obj)
+"""
+```
