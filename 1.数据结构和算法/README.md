@@ -1,13 +1,52 @@
-# 元素赋值
-使用多个变量名，“,”分隔接收同等长度的序列中的元素。
+# 第一章：数据结构和算法
 
-# 元素解压
-使用“*+变量名”动态接受多个元素，变量类型是list
+Python 提供了大量的内置数据结构，包括列表，集合以及字典。大多数情况下使用这些数据结构是很简单的。 但是，我们也会经常碰到到诸如查询，排序和过滤等等这些普遍存在的问题。 因此，这一章的目的就是讨论这些比较常见的问题和算法。 另外，我们也会给出在集合模块 collections 当中操作这些数据结构的方法。
 
-# deque（双向队列 FIFO）
-模块的工具类 `from collections import deque`
+# 1. 解压序列赋值给多个变量
+元素赋值：使用多个变量名，“,”分隔接收同等长度的序列中的元素。  
+赋值语句 -> 解压（变量的数量必须跟序列元素的数量一样） -> 赋值
+```python
+p = (4, 5)
+x, y = p  # x=4, y=5
+p = (1, 2, 3, 4, 5)
+x, _, _, _, y = p # x=1, y=5; 使用任意变量名占位，只使用一部分
+
+p = (1, (2, 3, 4), 5)
+x, (a1, a2, a3), y = p # x=1, a1=2, a2=3, a3=4, y
+
+```  
+变量个数与序列元素不匹配：
+```python
+In[2]: p = (1, (2, 3, 4), 5)
+In[9]: x, (a1, a2, a3) = p
+Traceback (most recent call last):
+  File "F:\Python3\lib\site-packages\IPython\core\interactiveshell.py", line 2961, in run_code
+    exec(code_obj, self.user_global_ns, self.user_ns)
+  File "<ipython-input-9-207532b8fdb0>", line 1, in <module>
+    x, (a1, a2, a3) = p
+ValueError: too many values to unpack (expected 2)
+```
+
+# 2. 解压可迭代对象赋值给多个变量
+元素解压：使用“* + 变量名”的形式动态接受多个元素，变量类型是list  
+```python
+p = (1, 2, 3, 4, 5)
+x, *y, z = p   # x=1, y=[2,3,4], z=5
+a, b, c, d, e, *f = p   # a=1, b=2, c=3, d=4, e=5, f=[]
+
+record = ('ACME', 50, 123.45, (12, 18, 2012))
+name, *_, (*_, year) = record  # name='ACME', year=2012
+
+```
+
+# 3. 保留最后 N 个元素
+deque（双向队列 FIFO）：`collections`模块的工具类 `from collections import deque`  
+使用` deque(maxlen=N) `构造函数会新建一个固定大小的队列。当新的元素加入并且这个队列已满的时候， 最老的元素会自动被移除掉。  
 
 `q = deque(maxlen=3)`创建一个长度为3的堆，用法类似list。
+
+参考示例`code/sequence_tail_n.py`。  
+`yield`表达式参考4.3节。
 
 # heap （堆）
 模块 `import heapq`
