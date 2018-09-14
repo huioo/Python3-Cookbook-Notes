@@ -40,7 +40,7 @@ name, *_, (*_, year) = record  # name='ACME', year=2012
 ```
 
 # 3. 保留最后 N 个元素
-deque（双向队列 FIFO）：`collections`模块的工具类 `from collections import deque`  
+deque（双向队列 FIFO）: `collections`模块的工具类 `from collections import deque`  
 使用` deque(maxlen=N) `构造函数会新建一个固定大小的队列。当新的元素加入并且这个队列已满的时候， 最老的元素会自动被移除掉。  
 
 `q = deque(maxlen=3)`创建一个长度为3的堆，用法类似list。
@@ -48,27 +48,74 @@ deque（双向队列 FIFO）：`collections`模块的工具类 `from collections
 参考示例`code/sequence_tail_n.py`。  
 `yield`表达式参考4.3节。
 
-# heap （堆）
-模块 `import heapq`
+# 4. 查找最大或最小的 N 个元素
+heap （堆）: 模块 `import heapq`
 
 模块方法：
-- 'heappush'：添加
-- 'heappop'： 取出
-- 'heapify'： 堆化序列
-- 'heapreplace'：取出并替换
-- 'merge'： 合并
+- 'heappush'：
+- 'heappop'： 
+- 'heapify'： 堆排序
+- 'heapreplace'：
+- 'merge'： 
 - 'nlargest'： 找出最大的几个元素
 - 'nsmallest'： 找出最小的几个元素
 - 'heappushpop'： 
 
-# multidict
-一个键映射多个值，即值为序列类型的容器，如list、set等
+参考示例`code/heapq_use.py`。  
 
-模块的工具类 `from collections import defaultdict`
 
-dict类型的方法 `{}.setdefault('a', []).append(1)`
+# 5. 实现一个优先级队列
+heap （堆）: 模块 `import heapq`
 
-# 有序字典
+`heappush`方法的特性：插入元素之后，heap[0]总是最小；  
+`heappop`方法的特性：取出的元素总是最小的；
+`heappop()` 函数总是返回”最小的”的元素，这就是保证队列pop操作返回正确元素的关键。 另外，由于 push 和 pop 操作时间复杂度为 O(log N)，其中 N 是堆的大小，因此就算是 N 很大的时候它们运行速度也依旧很快。
+```python
+# 每个元素，对应一个优先级priority值(priority, index, item)
+nums = [
+    (1, 0, 1), (5, 1, 5), (2, 2, 2), (4, 3, 4), (3, 4, 3), 
+]
+import heapq
+heapq.heapify(nums)
+print(heapq.heappop(nums))  # (1, 0, 1)
+print(heapq.heappop(nums))  # (2, 2, 2)
+print(heapq.heappop(nums))  # (3, 4, 3)
+
+```
+上面根据priority的值排序，总是取出最小的。反之，取priority的相反数。
+
+
+# 6. 字典中的键映射多个值
+multidict： 一个键对应多个值的字典，即键对应的值是list、set、tuple等序列形式。  
+个字典就是一个键对应一个单值的映射。如果你想要一个键映射多个值，那么你就需要将这多个值放到另外的容器中， 比如列表或者集合里面。比如，你可以像下面这样构造这样的字典：
+```python
+d = {'a': [1, 2, 3], 'b': [4, 5]}
+e = {'a': {1, 2, 3}, 'b': {4, 5}}
+```
+模块的工具类 `from collections import defaultdict`：`defaultdict`的第一个特性是它会自动初始化每个`key`刚开始对应的值，所以只需要管理这个默认的值对象。
+```python
+from collections import defaultdict
+d = defaultdict(list)
+d['a'].append(1)
+d['a'].append(2)
+d['b'].append(4)
+
+d = defaultdict(set)
+d['a'].add(1)
+d['a'].add(2)
+d['b'].add(4)
+```
+dict类型的方法 `{}.setdefault('a', []).append(1)`：获取字典某个key的对应value，如果不存在，就将默认值赋给value。
+```python
+d = {} # 一个普通的字典
+d.setdefault('a', []).append(1)
+d.setdefault('a', []).append(2)
+d.setdefault('b', []).append(4)
+```
+参考示例`collections_defaultdict.py`。
+
+# 8. 字典的运算
+有序字典
 记录插入顺序的字典类型
 
 模块的工具类 `from collections import OrderedDict`

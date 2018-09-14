@@ -1,3 +1,9 @@
+"""
+Python的迭代协议要求一个 __iter__() 方法返回一个特殊的迭代器对象， 这个迭代器对象实现了 __next__() 方法并通过 StopIteration 异常标识迭代的完成。
+但是，实现这些通常会比较繁琐。 下面我们演示下这种方式，如何使用一个关联迭代器类重新实现 depth_first() 方法：
+"""
+
+
 class Node:
     def __init__(self, value):
         self._value = value
