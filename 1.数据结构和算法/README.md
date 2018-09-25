@@ -115,42 +115,71 @@ d.setdefault('b', []).append(4)
 参考示例`collections_defaultdict.py`。
 
 # 8. 字典的运算
-有序字典
-记录插入顺序的字典类型
+`zip()`函数反转字典的键和值，返回一个只能访问一次的迭代器。  
+`sorted()`函数排序，通过`key`或`func`指定排序方式。
 
-模块的工具类 `from collections import OrderedDict`
-
-# zip()（压缩函数）
 ```python
->>> prices = {
-...     'ACME': 45.23,
-...     'AAPL': 612.78,
-...     'IBM': 205.55,
-...     'HPQ': 37.20,
-...     'FB': 10.75
-... }
->>> prices.items()
-dict_items([('ACME', 45.23), ('AAPL', 612.78), ('IBM', 205.55), ('HPQ', 37.2), ('FB', 10.75)])
->>> zip(*prices.items())    # 返回一个迭代器，zip对象
-<zip object at 0x000001B4C7340488>
->>> list(zip(*prices.items()))
-[('ACME', 'AAPL', 'IBM', 'HPQ', 'FB'), (45.23, 612.78, 205.55, 37.2, 10.75)]
+from operator import itemgetter
+# 股票名和价格映射字典
+prices = {
+    'ACME': 45.23, 'AAPL': 612.78, 'IBM': 205.55,
+    'HPQ': 37.20, 'FB': 10.75
+}
+kvs = prices.items()
+minimum = min(kvs, key=itemgetter(1))
+maximum = max(kvs, key=itemgetter(1))
+print(minimum, maximum)     # ('FB', 10.75) ('AAPL', 612.78)
+
+print(prices.keys())   # dict_keys(['ACME', 'AAPL', 'IBM', 'HPQ', 'FB'])
+print(prices.values())   # dict_values([45.23, 612.78, 205.55, 37.2, 10.75])
+
+# zip() 函数创建的是一个只能访问一次的迭代器
+min_price = min(zip(prices.values(), prices.keys()))
+max_price = max(zip(prices.values(), prices.keys()))
+print(min_price, max_price)     # (10.75, 'FB') (612.78, 'AAPL')
+
+# sorted() 函数排序默认 element-wise 排序
+prices_sorted = sorted(zip(prices.values(), prices.keys()))
+print(prices_sorted)
+# prices_sorted is [(10.75, 'FB'), (37.2, 'HPQ'),
+#                   (45.23, 'ACME'), (205.55, 'IBM'),
+#                   (612.78, 'AAPL')]
+
+min(prices, key=lambda k: prices[k])   # Returns 'FB'
+max(prices, key=lambda k: prices[k])   # Returns 'AAPL'
+
 ```
 
+参考示例`zip_sorted_use.py`。
+
+# 9. 查找两字典的相同点
+
+字典是键集合与值集合的映射关系。字典的`keys()`方法返回一个展现键集合的键试图对象。键试图支持集合操作，比如集合并、交、差运算。  
+如果你想对集合的键执行一些普通的集合操作，可以直接使用键试图对象而不用先将它们转换成一个set。  
+字典的 `items()` 方法返回一个包含 (键，值) 对的元素视图对象。 这个对象同样也支持集合操作，并且可以被用来查找两个字典有哪些相同的键值对。  
+尽管字典的 `values()` 方法也是类似，但是它并不支持这里介绍的集合操作。 某种程度上是因为值视图不能保证所有的值互不相同，这样会导致某些集合操作会出现问题。不过，如果你硬要在值上面执行这些集合操作的话，你可以先将值集合转换成 set，然后再执行集合运算就行了。  
+
+## 集合操作
+
+```python
 # 集合操作
-在Python set是基本数据类型的一种集合类型，它有可变集合(`set()`)和不可变集合(`frozenset()`)两种。创建集合set、集合set添加、集合删除、交集、并集、差集的操作都是非常实用的方法。
-```python
->>> set('boy')      # 创建set
-{'o', 'y', 'b'}
 
->>> a = set('boy')  # 集合添加删除
->>> a.add('python')     # add()
->>> a
-{'b', 'o', 'python', 'y'}
->>> a.remove('python') # remove()
->>> a
-{'b', 'o', 'y'}
+a = {'x': 1, 'y': 2, 'z': 3}
+b = {'w': 10, 'x': 11, 'y': 2}
+
+# 相同的键
+print(a.keys() & b.keys())         # { 'x', 'y' }
+# 在a中且不在b中的键
+print(a.keys() - b.keys())         # { 'z' }
+# 相同的键值对
+print(a.items() & b.items())       # { ('y', 2) }
+# 制造一个新的字典，去掉某些键（去掉'z'和'w'）
+c = {key: a[key] for key in a.keys() - {'z', 'w'}}
+print(c)                           # {'x': 1, 'y': 2}
+
 ```
+在Python set是基本数据类型的一种集合类型，它有可变集合(`set()`)和不可变集合(`frozenset()`)两种。创建集合set、集合set添加、集合删除、交集、并集、差集的操作都是非常实用的方法。
+
 Python set()集合操作符号、数学符号：
 
  数学符号 | Python符号 | 含义
@@ -168,18 +197,26 @@ Python set()集合操作符号、数学符号：
 >>> b = set([2,3,4])
 >>> a,b
 ({1, 2, 3}, {2, 3, 4})
->>> a - b
+>>> a - b   # 差集
 {1}
->>> b - a
+>>> b - a   # 差集
 {4}
->>> b & a
+>>> b & a   # 交集
 {2, 3}
->>> a & b
+>>> a & b   # 交集
 {2, 3}
->>> a | b
+>>> a | b   # 并集
 {1, 2, 3, 4}
 
 ```
+
+# 10. 删除序列相同元素并保持顺序
+有序字典
+记录插入顺序的字典类型
+
+模块的工具类 `from collections import OrderedDict`
+
+
 
 # 去重且保留顺序
 不保留序列顺序时，可使用`set()`生成一个集合，但序列的所有元素必须是`hashable`的类型，即元素必须可哈希。
