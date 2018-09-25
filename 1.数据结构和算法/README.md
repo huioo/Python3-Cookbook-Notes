@@ -112,7 +112,31 @@ d.setdefault('a', []).append(1)
 d.setdefault('a', []).append(2)
 d.setdefault('b', []).append(4)
 ```
-参考示例`collections_defaultdict.py`。
+参考示例`code/collections_defaultdict.py`。
+
+# 7. 字典排序
+有序字典: 模块 `from collections import OrderedDict `
+
+在迭代操作的时候它会保持元素被插入时的顺序，示例如下：
+
+```python
+import json
+from collections import OrderedDict
+
+d = OrderedDict()
+d['foo'] = 1
+d['bar'] = 2
+d['spam'] = 3
+d['grok'] = 4
+# Outputs "foo 1", "bar 2", "spam 3", "grok 4"
+for key in d:
+    print(key, d[key])
+
+# 控制以 JSON 编码后字段的顺序
+print(json.dumps(d))    # {"foo": 1, "bar": 2, "spam": 3, "grok": 4}
+
+```
+参考示例`code/collections_ordereddict.py`。
 
 # 8. 字典的运算
 `zip()`函数反转字典的键和值，返回一个只能访问一次的迭代器。  
@@ -150,7 +174,7 @@ max(prices, key=lambda k: prices[k])   # Returns 'AAPL'
 
 ```
 
-参考示例`zip_sorted_use.py`。
+参考示例`code/zip_sorted_use.py`。
 
 # 9. 查找两字典的相同点
 
@@ -210,16 +234,11 @@ Python set()集合操作符号、数学符号：
 
 ```
 
+参考示例`code/set_operation.py`。
+
 # 10. 删除序列相同元素并保持顺序
-有序字典
-记录插入顺序的字典类型
 
-模块的工具类 `from collections import OrderedDict`
-
-
-
-# 去重且保留顺序
-不保留序列顺序时，可使用`set()`生成一个集合，但序列的所有元素必须是`hashable`的类型，即元素必须可哈希。
+不保留序列顺序时，可使用`set()`生成一个集合，但序列的所有元素必须是`hashable`的类型，即元素必须可哈希，哈希散列值是整数类型。
 ```python
 >>> a = {'a':1}
 >>> b = {'b':2}
@@ -239,56 +258,87 @@ Traceback (most recent call last):
   File "<input>", line 1, in <module>
 TypeError: unhashable type: 'dict'
 ```
-模仿`sorted()`、`min()`、`max()`等函数
+
+模仿`sorted()`、`min()`、`max()`等函数，进行去重且保留顺序
 
 ```python
-def dedupe(iter):
+# 删除序列相同元素并保持顺序
+
+
+def dedupe1(iterable):
     seen = set()
-    for item in iter:
+    for item in iterable:
         if item not in seen:
             yield item
             seen.add(item)
 
-def dedupe(iter, key=None):
+
+def dedupe2(iterable, key=None):
     """ 自定义重复条件 """
     seen = set()
-    for item in iter:
+    for item in iterable:
         val = item if key is None else key(item)
         if val not in seen:
-        ``    yield item
+            yield item
             seen.add(val)
+        
+        
+a = [1, 5, 2, 1, 9, 1, 5, 10]
+
+print(list(dedupe1(a)))     # [1, 5, 2, 9, 10]
+
+b = zip(['']*len(a), a)
+print(list(dedupe2(b, key=lambda x: x[1])))  # [('', 1), ('', 5), ('', 2), ('', 9), ('', 10)]
+
+b = zip(['']*len(a), a)
+print(list(dedupe2(b, key=lambda x: x[0])))  # [('', 1)]
 
 ```
 
-# slice 切片 
-切片对象的` indices(size) `函数，返回一个符合size大小的切片的` (start, stop, step) `元组值，所有的值都会被缩小，直到适合这个已知序列的边界为止。 这样，使用的时就不会出现 IndexError 异常。。
+参考示例`code/sequence_2_ordered_set.py`。
+
+# 11. 命名切片
+切片对象：
+- class slice(stop)
+- class slice(start, stop[, step])
+
+切片对象的使用：
+
 ```python
->>> a1 = slice(2, 5, 1)
->>> b = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
->>> b[a1]
-[2, 3, 4]
->>> a1.start, a.stop, a.step
-(2, 3, 1)
->>> a1.indices('01')    # 参数值为integer类型
-Traceback (most recent call last):
-  File "<input>", line 1, in <module>
-TypeError: 'str' object cannot be interpreted as an integer
->>> a1.indices(len('01'))
-(2, 2, 1)
->>> a2 = a1.indices(len('01'))
->>> a2
-(2, 2, 1)
->>> b[slice(*a2)]
-[]
->>> '01'[slice(*a2)]
-''
->>> '01'[a1]
-''
-
+>>> items = [0, 1, 2, 3, 4, 5, 6]
+>>> a = slice(2, 4)     # 创建slice对象
+>>> items[2:4]          # 切片取值
+[2, 3]
+>>> items[a]            # 使用切片对象取值
+[2, 3]
+>>> items[a] = [10,11]  # 重新赋值
+>>> items
+[0, 1, 10, 11, 4, 5, 6] 
+>>> del items[a]        # 删除
+>>> items
+[0, 1, 4, 5, 6]
 ```
 
-# 统计计数
-模块工具类 `from collections import Counter`
+如果你有一个切片对象a，你可以分别调用它的 a.start , a.stop , a.step 属性来获取更多的信息。
+```python
+>>> a = slice(5, 50, 2)
+>>> a.start, a.stop, a.step
+(5, 20, 2)
+```
+
+切片对象的` indices(size) `函数，返回` (start, stop, step) `三元组，它符合已知size大小的序列，所有的值都会被缩小，直到适合这个已知序列的边界为止。 这样，使用的时就不会出现 `IndexError` 异常。。
+```python
+>>> a = slice(5, 50, 2)
+>>> s = 'HelloWorld'
+>>> a.indices(len(s))
+(5, 10, 2)
+>>> s[a]
+'Wrd'
+```
+
+# 12. 序列中出现次数最多的元素
+
+统计计数: 模块工具类 `from collections import Counter`
 
 ```python
 >>> from collections import Counter
@@ -313,47 +363,19 @@ Counter({'a': 3, 'c': 1, 'b': -2})
 0
 ```
 
-# operator.itemgetter
+# 13. 通过某个关键字排序一个字典列表
 
-模块的工具类 `from operator import itemgetter`
-
+取值工具类（operator.itemgetter）: 模块的工具类 `from operator import itemgetter`
 
 ```python
 >>> from operator import itemgetter
 >>> itemgetter('a')
 operator.itemgetter('a')
->>> 
-"""
-上述结果的itemgetter类相应`__repr__()`方法：
-    def __repr__(self):
-        return '%s.%s(%s)' % (self.__class__.__module__,
-                              self.__class__.__name__,
-                              ', '.join(map(repr, self._items)))
-"""
-```
 
-```python
 >>> a = [{'a':1},{'a':1},{'a':1},{'a':1},{'a':1}]
 >>> map(itemgetter('a'), a)
 <map object at 0x000002253B077EF0>
 >>> list(map(itemgetter('a'), a))
 [1, 1, 1, 1, 1]
 
-"""
-itemgetter类，实例化返回的 `callable` 对象，当作函数调用相关`__call__()`方法：
-    def __init__(self, item, *items):
-        if not items:
-            self._items = (item,)
-            def func(obj):
-                return obj[item]
-            self._call = func
-        else:
-            self._items = items = (item,) + items
-            def func(obj):
-                return tuple(obj[i] for i in items)
-            self._call = func
-
-    def __call__(self, obj):
-        return self._call(obj)
-"""
 ```
