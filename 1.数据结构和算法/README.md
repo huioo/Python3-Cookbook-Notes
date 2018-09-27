@@ -45,7 +45,7 @@ deque（双向队列 FIFO）: `collections`模块的工具类 `from collections 
 
 `q = deque(maxlen=3)`创建一个长度为3的堆，用法类似list。
 
-参考示例`code/sequence_tail_n.py`。  
+参考示例[`code/sequence_tail_n.py`](code/sequence_tail_n.py)。  
 `yield`表达式参考4.3节。
 
 # 4. 查找最大或最小的 N 个元素
@@ -61,7 +61,7 @@ heap （堆）: 模块 `import heapq`
 - 'nsmallest'： 找出最小的几个元素
 - 'heappushpop'： 
 
-参考示例`code/heapq_use.py`。  
+参考示例[`code/heapq_use.py`](code/heapq_use.py)。  
 
 
 # 5. 实现一个优先级队列
@@ -112,7 +112,7 @@ d.setdefault('a', []).append(1)
 d.setdefault('a', []).append(2)
 d.setdefault('b', []).append(4)
 ```
-参考示例`code/collections_defaultdict.py`。
+参考示例[`code/collections_defaultdict.py`](code/collections_defaultdict.py)。
 
 # 7. 字典排序
 有序字典: 模块 `from collections import OrderedDict `
@@ -136,7 +136,7 @@ for key in d:
 print(json.dumps(d))    # {"foo": 1, "bar": 2, "spam": 3, "grok": 4}
 
 ```
-参考示例`code/collections_ordereddict.py`。
+参考示例[`code/collections_ordereddict.py`](code/collections_ordereddict.py)。
 
 # 8. 字典的运算
 `zip()`函数反转字典的键和值，返回一个只能访问一次的迭代器。  
@@ -174,7 +174,7 @@ max(prices, key=lambda k: prices[k])   # Returns 'AAPL'
 
 ```
 
-参考示例`code/zip_sorted_use.py`。
+参考示例[`code/zip_sorted_use.py`](code/zip_sorted_use.py)。
 
 # 9. 查找两字典的相同点
 
@@ -234,7 +234,7 @@ Python set()集合操作符号、数学符号：
 
 ```
 
-参考示例`code/set_operation.py`。
+参考示例[`code/set_operation.py`](code/set_operation.py)。
 
 # 10. 删除序列相同元素并保持顺序
 
@@ -295,7 +295,7 @@ print(list(dedupe2(b, key=lambda x: x[0])))  # [('', 1)]
 
 ```
 
-参考示例`code/sequence_2_ordered_set.py`。
+参考示例[`code/sequence_2_ordered_set.py`](code/sequence_2_ordered_set.py)。
 
 # 11. 命名切片
 切片对象：

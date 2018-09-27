@@ -34,3 +34,60 @@
   > 扫描字符串查找符合`pattern`的匹配字符串
 
 参考示例[`code/str_match.py`](code/str_match.py)。
+
+# 3. 用Shell通配符匹配字符串
+
+Unix Shell 通配符：比如 `*.py` , `Dat[0-9]*.csv` 。
+
+ 通配符  | 含义
+ ---:   | :---
+ *      | matches everything
+ ?      | matches any single character
+ [seq]  | matches any character in seq
+ [!seq] | matches any char not in seq
+
+`fnmatch`模块的`fnmatch()`和`fnmatchcase()`方法:  
+- `fnmatch(name, pat)`：
+  > 字符串匹配，忽略大小写
+- `fnmatchcase(name, pat)`：
+  > 字符串匹配，按照大小写
+- `filter(names, pat)`：
+  > 过滤符合匹配条件的元素
+- `translate(pat)`:
+  > 将shell通配符匹配字符串转转化为正则形式
+
+参考示例[`code/fnmatch_use.py`](code/fnmatch_use.py)。
+
+# 4. 字符串匹配和搜索
+
+匹配字面字符串，使用`str`的`find()`、`startswith()`和`endswith()`方法：  
+- `str.startswith(self, prefix, start=None, end=None)`  
+- `str.endswith(self, suffix, start=None, end=None)`  
+- `str.find(self, sub, start=None, end=None)`  
+  > `sub`表示查找的子字符串，返回第一个查找到的子字符串位置，如果没找到，返回 -1 
+
+匹配或者搜索特定模式的文本，使用正则表达式和 `re` 模块。
+- 原始字符串：
+  > 比如 `r'(\d+)/(\d+)/(\d+)'` 。  
+    这种字符串将不去解析反斜杠，这在正则表达式中是很有用的。  
+    如果不这样做的话，你必须使用两个反斜杠，类似 `(\\d+)/(\\d+)/(\\d+)`。
+
+- `re.match(pattern, string, flags=0)`  
+  > 从头开始应用 `pattern` 进行匹配，如果没有发现匹配，返回`None`，否则返回一个`match`对象。  
+    
+  - `match_obj.group()`  
+    > 返回正则匹配成功的第一个字符串
+
+  - `match_obj.groups()`
+    > 返回正则匹配成功的第一个字符串中对应捕获的子组内容，以`tuple`的形式返回
+
+- `re.compile(pattern, flags=0)`
+  > 使用 re.compile() 编译正则表达式字符串， 然后使用 match() , findall() 或者 finditer() 等方法。  
+    如果你打算做大量的匹配和搜索操作的话，最好先编译正则表达式，然后再重复使用它。  
+    模块级别的函数会将最近编译过的模式缓存起来，因此并不会消耗太多的性能， 但是如果使用预编译模式的话，你将会减少查找和一些额外的处理损耗。  
+
+- `re.findall(pattern, string, flags=0)`:
+  > 搜索文本并以列表形式返回所有的匹配。 
+
+参考示例[`code/re_use.py`](code/re_use.py)。
+
