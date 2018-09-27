@@ -9,7 +9,7 @@
   > `re.split(pattern, string, maxsplit=0, flags=0)`：  
   `pattern`指正则匹配的分割字符串的正则表达式，`string`指需要分割字符串
 
-参考示例 [code/str_split_use.py](#code/str_split_use.py)
+参考示例 [code/str_split_use.py](code/str_split_use.py)
 
 
 # 2. 字符串开头或结尾匹配
@@ -33,4 +33,4 @@
     """Scan through string looking for a match to the pattern, returning a match object, or None if no match was found."""  
   > 扫描字符串查找符合`pattern`的匹配字符串
 
-参考示例[`code/str_match.py`](#code/str_match.py)。
+参考示例[`code/str_match.py`](code/str_match.py)。
