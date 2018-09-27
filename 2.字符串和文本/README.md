@@ -89,5 +89,27 @@ Unix Shell 通配符：比如 `*.py` , `Dat[0-9]*.csv` 。
 - `re.findall(pattern, string, flags=0)`:
   > 搜索文本并以列表形式返回所有的匹配。 
 
-参考示例[`code/re_use.py`](code/re_use.py)。
+参考示例[`code/re_match.py`](code/re_match.py)。
+
+# 5. 字符串搜索和替换 
+
+替换字面字符串，使用`str.replace()`直接替换特定字符串。
+- `str.replace(self, old, new, count=None)`
+  > 复制原字符串，并将其存在的`old`子字符串替换为`new`子字符串。  
+    `count`表示替换的个数
+
+复杂的字符串替换，使用`re`模块的`sub()`和`subn()`方法。
+- `re.sub(pattern, repl, string, count=0, flags=0)`
+  - `pattern`指被匹配的模式。
+  - `repl`是替换模式，可以是一个字符串或一个调用对象（callable）。如果是字符串，它里面的反斜杠转义会被处理，比如`\3`指向前面模式的捕获组号。如果`repl`是一个可调用对象（callable），传给它一个`match`对象，且必须返回一个用来替换的字符串。
+  - `string`是替换的字符串。
+  - 结果以字符串的形式返回，其值为替换之后的新字符串。
+
+- `re.subn(pattern, repl, string, count=0, flags=0)`
+  - 等同于`re.sub()`方法，但是结果以**二元素元组**的形式（替换的新字符串, 替换的次数）返回。
+
+参考示例[`code/re_replace.py`](code/re_replace.py)。
+
+
+
 
